@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Heritage at Risk: The Loss of Historic Metal Truss Bridges in Pennsylvania</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+
+    <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/3.15/themes/css/cartodb.css" />
+
+    <style>
+    
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: #3d3d3d;
+            font-family: "Lato", sans-serif;
+        }
+        
+        h1 {
+            padding: 8px 25px 8px 15px;
+            color: whitesmoke;
+            margin: 0;
+            background: #3d3d3d;
+            font-weight: 600;
+            font-size: 1.5em;
+        }
+        
+        h2 {
+            margin: 0;
+            padding: 4px 25px 12px 15px;
+            color: whitesmoke;
+            background: #3d3d3d;
+            font-weight: 500;
+            font-size: 1.1em;
+        }
+        
+        a {
+            color: #3d3d3d;
+        }
+        
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            width: 70%;
+        }
+        #side-panel {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 30%;
+            background: #f6f6c5;
+            border-right: 2px solid #3d3d3d;
+        }
+        
+        #side-panel-content {
+            overflow-y: scroll;
+            /* add a scroll bar if content extends beyond the height of the page */
+        }
+        
+        #side-panel p {
+            margin: 8px 0 4px;
+            padding: 8px 25px 4px 15px;
+            color: #3d3d3d;
+            font-size: 0.87em;
+        }
+        
+        div.cartodb-legend-stack {
+            left: 15px;
+            bottom: 15px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div id="map"></div>
+    
+    <!-- Create the side panel -->
+    <div id='side-panel'>
+        <div id='headers'>
+            <h1>Heritage at Risk</h1>
+            <h2>The Loss of Historic Metal Truss Bridges in Pennsylvania</h2>
+        </div>
+        <div id='side-panel-content'>
+            <p>In 2001, the Pennsylvania Department of Transportation and its contractors published an assessment of approximately 12,000 bridges for potential eligibility for the National Register of Historic Places. The study aimed at creating a Bridge Management Plan to identify which bridges could and should be preserved. Based on this assessment, Pennsylvania had 333 historically significant metal truss bridges: bridges which were either listed on the National Register of Historic Places or eligible for it. Since then, many of these historic structures have fallen into disrepair and have been demolished and replaced. Today, 40% of the bridges intended to be preserved have been demolished statewide.</p>
+
+            <p>This map shows the current status of these historic structures and identifies which counties and PennDOT engineering districts have been most and least successful at preservation. Initially, the map shows the percent of historically significant metal truss bridges from 2001 that have been demolished in each county. Zoom in to see the status of each bridge.</p>
+
+            <p>Note: The current status of each bridge is based on Google Maps aerial imagery and Street View, Bridgehunter, HistoricBridges.org, and local knowledge.</p>
+        
+        </div><!-- end side panel content -->
+
+        <!-- Create the legend in HTML -->
+        <div class="cartodb-legend-stack">
+            <div class="cartodb-legend custom">
+                <div class="legend-title">Bridge Status</div>
+                    <ul>
+                        <li>
+                            <div class="bullet" style="background:#136400"></div>
+                            Existing
+                        </li>
+                        <li>
+                            <div class="bullet" style="background:#B40903"></div>
+                            Demolished
+                        </li>  
+                        <li>
+                            <div class="bullet" style="background:#666666"></div>
+                            Status Unknown
+                        </li> 
+                    </ul>
+            </div>
+            <div class='cartodb-legend choropleth'>	
+                <div class="legend-title">County Bridge Demolition Rate (2001-present)</div>
+                <ul>
+                    <li class="min">
+                        0% demolished
+                    </li>
+                    <li class="max">
+                        100% demolished
+                    </li>
+                    <li class="graph count_315">
+                    <div class="colors">
+                    <div class="quartile" style="background-color:#1a9641"></div>
+                    <div class="quartile" style="background-color:#a6d96a"></div>
+                    <div class="quartile" style="background-color:#ffffbf"></div>
+                    <div class="quartile" style="background-color:#fdae61"></div>
+                    <div class="quartile" style="background-color:#d7191c"></div>
+                    </div>
+                    </li>
+                </ul>
+            </div>
+            <div class='cartodb-legend custom'>	
+                <ul>
+                    <li>
+                        <div class="bullet" style="background:#cccccc"></div>
+                        No Historically Significant Metal Truss Bridges in 2001
+                    </li>
+                </ul>
+            </div>        
+            <div class='cartodb-legend custom'>	
+                <div class="legend-title">PennDOT Engineering Districts</div>
+                    <ul>
+                        <li>
+                            <div class="bullet" style="background:#000000"></div>
+                            District Boundaries
+                        </li>
+                    </ul>
+            </div>
+        </div>
+        
+    </div>  <!-- end side panel -->
+
+    <!-- Load CartoDB.js Library -->
+    <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
+    
+    <!-- Load CartoCSS Scripts -->        
+    <script type="cartocss/html" id="pa-historically-significant-truss-bridges">
+        /** category visualization */
+
+        #pa_historically_significant_truss_bridges {
+           marker-fill-opacity: 0.9;
+           marker-line-color: #FFF;
+           marker-line-width: 1;
+           marker-line-opacity: 1;
+           marker-placement: point;
+           marker-type: ellipse;
+           marker-width: 12.5;
+           marker-allow-overlap: true;
+            [zoom < 10] {
+            marker-fill-opacity: 0;
+            marker-line-opacity: 0;
+          }
+        }
+        #pa_historically_significant_truss_bridges[existing="No"] {
+           marker-fill: #B40903;
+        }
+        #pa_historically_significant_truss_bridges[existing="Unknown"] {
+           marker-fill: #666666;
+        }
+        #pa_historically_significant_truss_bridges[existing="Yes"] {
+           marker-fill: #136400;
+        }
+    </script>
+    
+    <script type="cartocss/html" id="pa-counties-without-bridges">
+        /** simple visualization */
+
+        #pa_counties_with_bridge_status{
+          polygon-fill: #999999;
+          polygon-opacity: 0.7;
+          line-color: #000000;
+          line-width: 0.5;
+          line-opacity: 1;
+          line-opacity: 1;
+            [zoom >= 10] {
+            polygon-opacity: 0.3
+          }    
+        }    
+    </script>
+    
+    <script type="cartocss/html" id="pa-counties-with-bridges">
+        /** choropleth visualization */
+
+        #pa_counties_with_bridge_status{
+          polygon-fill: #1a9850;
+          polygon-opacity: 0.6;
+          line-color: #000000;
+          line-width: 0.5;
+          line-opacity: 1;
+            [zoom >= 10] {
+            polygon-opacity: 0.3
+          }  
+        }
+        #pa_counties_with_bridge_status [ percent_dem <= 100] {
+           polygon-fill: #d7191c;
+        }
+        #pa_counties_with_bridge_status [ percent_dem <= 80] {
+           polygon-fill: #fdae61;
+        }
+        #pa_counties_with_bridge_status [ percent_dem <= 60] {
+           polygon-fill: #ffffbf;
+        }
+        #pa_counties_with_bridge_status [ percent_dem <= 40] {
+           polygon-fill: #86d96a;
+        }
+        #pa_counties_with_bridge_status [ percent_dem <= 20] {
+           polygon-fill: #1a9641;
+        }    
+    </script>
+    
+    <script type="cartocss/html" id="penndot-engineering-districts">
+        /** simple visualization */
+
+        #penndot_engineering_districts{
+          polygon-fill: #FF6600;
+          polygon-opacity: 0;
+          line-color: #000000;
+          line-width: 2.5;
+          line-opacity: 1;
+        }
+
+        #penndot_engineering_districts::labels {
+          text-name: [district_n];
+          text-face-name: 'Open Sans Regular';
+          text-size: 14;
+          text-label-position-tolerance: 10;
+          text-fill: #000;
+          text-halo-fill: #FFF;
+          text-halo-radius: 2;
+          text-dy: -10;
+          text-allow-overlap: false;
+          text-placement: point;
+          text-placement-type: simple;
+        }
+    </script>
+    
+    <script type="infowindow/html" id="counties_infowindow_template">
+      <div class="cartodb-popup v2">
+        <a href="#close" class="cartodb-popup-close-button close">x</a>
+         <div class="cartodb-popup-content-wrapper">
+           <div class="cartodb-popup-content">
+             <h3><font color="666666">{{content.data.name}} County</font></h3>
+             <p>{{content.data.percent_dem}}% of 2001 historically significant metal truss bridges demolished</p>
+           </div>
+         </div>
+         <div class="cartodb-popup-tip-container"></div>
+      </div>
+    </script>
+    
+    <script type="infowindow/html" id="bridges_infowindow_template">
+        <div class="cartodb-popup v2">
+            <a href="#close" class="cartodb-popup-close-button close">x</a>
+            <div class="cartodb-popup-content-wrapper">
+                <div class="cartodb-popup-content">      
+                      <h3><font color="666666">{{feature_descr}} Bridge</font></h3>
+                      <p>
+                      <h4>County</h4>        
+                      <p>{{cty}} County</p>        
+                      <h4>PennDOT District</h4>
+                      <p>{{dist}}</p>
+                      <h4>Type</h4>
+                      <p>{{type}}</p>
+                      <h4>Status</h4>
+                      <p>{{status}}</p>        
+                </div>
+            </div>
+            <div class="cartodb-popup-tip-container"></div>
+        </div>
+    </script>
+
+    <script>
+        
+        // Instantiate the map, centered in Pennsylvania
+        var map = new L.Map("map", {
+            center: [41, -77.6],
+            zoom: 8,
+            minZoom: 8
+        });
+        
+        // Add tiles
+        var Esri_WorldGrayCanvas = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+            maxZoom: 16
+        }).addTo(map);
+
+        // Create the CartoDB source object, which each sublayer being a layer in the CartoDB map
+        var sourceObject = {
+            user_name: 'skeetidot',
+            type: 'cartodb',
+            sublayers: [
+                {
+                    sql: "SELECT * FROM pa_counties_with_bridge_status WHERE total_brid=0",
+                    cartocss: $("#pa-counties-without-bridges").text()
+                },
+                {
+                    sql: "SELECT * FROM pa_counties_with_bridge_status WHERE percent_dem IS NOT NULL",
+                    cartocss: $("#pa-counties-with-bridges").text()  
+                },
+                {
+                    sql: "SELECT * FROM penndot_engineering_districts",
+                    cartocss: $("#penndot-engineering-districts").text()                    
+                },
+                {
+                    sql: "SELECT * FROM pa_historically_significant_truss_bridges",
+                    cartocss: $("#pa-historically-significant-truss-bridges").text()                    
+                }
+            ]
+        }
+        
+        // Create the CartoDB layer based on the source object
+        cartodb.createLayer(map, sourceObject, {
+            
+            // Enable legends and info windows
+            legends: true,
+            infowindow: true
+        })
+            
+            // When the data finishes loading
+            .on('done', function(layer) {
+                
+                // Get the counties with bridges sublayer (sublayer 1)
+                var counties = layer.getSubLayer(1);
+                
+                // Add info window interactivity to the counties with bridges sublayer. Choose the columns to display in the info window and specify the info window template.
+                cartodb.vis.Vis.addInfowindow(map, counties, ['name', 'percent_dem'], {
+                    infowindowTemplate: $('#counties_infowindow_template').text()
+                });
+                
+                // Get the bridge points sublayer (sublayer 3)
+                var bridges = layer.getSubLayer(3);
+            
+                // Add info window interactivity to the bridge points sublayer. Choose the columns to display in the info window and specify the info window template.
+                cartodb.vis.Vis.addInfowindow(map, bridges, ['feature_descr', 'cty', 'dist', 'type', 'status'], {
+                    infowindowTemplate: $('#bridges_infowindow_template').text()
+                });
+            
+                // get the height values for side panel and elements within it
+                var legendStackHeight = $('.cartodb-legend-stack')[1].clientHeight,
+                    sidePanelHeight = $('#side-panel').height(),
+                    headersHeight = $('#headers').height();
+            
+                
+                // calculate the necessary height of the side panel content
+                // and apply it
+                $('#side-panel-content').height(sidePanelHeight - legendStackHeight - headersHeight - 30);
+            
+            
+            })
+        
+            // If the data fails to load
+            .on('error', function() {
+                console.log("an error occurred");
+            })
+        
+            // Add the CartoDB layer to the map
+            .addTo(map);
+        
+    </script>
+
+</body>
+
+</html>
