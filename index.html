@@ -58,8 +58,9 @@
         }
         
         #side-panel-content {
-            /* overflow-y: scroll;*/
-            /* add a scroll bar if content extends beyond the height of the page */
+            overflow-y: auto; /* add a scroll bar if content extends beyond the height of the page */
+            display: block;
+            height: 75%;
         }
         
         #side-panel p {
@@ -70,8 +71,14 @@
         }
         
         div.cartodb-legend-stack {
+            display: inline;
             left: 15px;
+            width: 90%;
             bottom: 15px;
+        }
+        
+        element.style {
+            height: 100%;
         }
 
     </style>
@@ -94,67 +101,66 @@
 
             <p>Note: The current status of each bridge is based on Google Maps aerial imagery and Street View, Bridgehunter, HistoricBridges.org, and local knowledge.</p>
         
-        </div><!-- end side panel content -->
+            <!-- Create the legend in HTML -->
+            <div class="cartodb-legend-stack">
+                <div class="cartodb-legend custom">
+                    <div class="legend-title">Bridge Status</div>
+                        <ul>
+                            <li>
+                                <div class="bullet" style="background:#136400"></div>
+                                Existing
+                            </li>
+                            <li>
+                                <div class="bullet" style="background:#B40903"></div>
+                                Demolished
+                            </li>  
+                            <li>
+                                <div class="bullet" style="background:#666666"></div>
+                                Status Unknown
+                            </li> 
+                        </ul>
+                </div>
+                <div class='cartodb-legend choropleth'>	
+                    <div class="legend-title">County Bridge Demolition Rate (2001-present)</div>
+                    <ul>
+                        <li class="min">
+                            0% demolished
+                        </li>
+                        <li class="max">
+                            100% demolished
+                        </li>
+                        <li class="graph count_315">
+                        <div class="colors">
+                        <div class="quartile" style="background-color:#1a9641"></div>
+                        <div class="quartile" style="background-color:#a6d96a"></div>
+                        <div class="quartile" style="background-color:#ffffbf"></div>
+                        <div class="quartile" style="background-color:#fdae61"></div>
+                        <div class="quartile" style="background-color:#d7191c"></div>
+                        </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class='cartodb-legend custom'>	
+                    <ul>
+                        <li>
+                            <div class="bullet" style="background:#cccccc"></div>
+                            No Historically Significant Metal Truss Bridges in 2001
+                        </li>
+                    </ul>
+                </div>        
+                <div class='cartodb-legend custom'>	
+                    <div class="legend-title">PennDOT Engineering Districts</div>
+                        <ul>
+                            <li>
+                                <div class="bullet" style="background:#000000"></div>
+                                District Boundaries
+                            </li>
+                        </ul>
+                </div>
+            </div>            
+        </div> <!-- end side panel content -->      
 
-        <!-- Create the legend in HTML -->
-        <div class="cartodb-legend-stack">
-            <div class="cartodb-legend custom">
-                <div class="legend-title">Bridge Status</div>
-                    <ul>
-                        <li>
-                            <div class="bullet" style="background:#136400"></div>
-                            Existing
-                        </li>
-                        <li>
-                            <div class="bullet" style="background:#B40903"></div>
-                            Demolished
-                        </li>  
-                        <li>
-                            <div class="bullet" style="background:#666666"></div>
-                            Status Unknown
-                        </li> 
-                    </ul>
-            </div>
-            <div class='cartodb-legend choropleth'>	
-                <div class="legend-title">County Bridge Demolition Rate (2001-present)</div>
-                <ul>
-                    <li class="min">
-                        0% demolished
-                    </li>
-                    <li class="max">
-                        100% demolished
-                    </li>
-                    <li class="graph count_315">
-                    <div class="colors">
-                    <div class="quartile" style="background-color:#1a9641"></div>
-                    <div class="quartile" style="background-color:#a6d96a"></div>
-                    <div class="quartile" style="background-color:#ffffbf"></div>
-                    <div class="quartile" style="background-color:#fdae61"></div>
-                    <div class="quartile" style="background-color:#d7191c"></div>
-                    </div>
-                    </li>
-                </ul>
-            </div>
-            <div class='cartodb-legend custom'>	
-                <ul>
-                    <li>
-                        <div class="bullet" style="background:#cccccc"></div>
-                        No Historically Significant Metal Truss Bridges in 2001
-                    </li>
-                </ul>
-            </div>        
-            <div class='cartodb-legend custom'>	
-                <div class="legend-title">PennDOT Engineering Districts</div>
-                    <ul>
-                        <li>
-                            <div class="bullet" style="background:#000000"></div>
-                            District Boundaries
-                        </li>
-                    </ul>
-            </div>
-        </div>
-        
-    </div>  <!-- end side panel -->
+    </div> <!-- end side panel -->
 
     <!-- Load CartoDB.js Library -->
     <script src="http://libs.cartocdn.com/cartodb.js/v3/3.15/cartodb.js"></script>
@@ -339,6 +345,7 @@
             // Enable legends and info windows
             legends: true,
             infowindow: true
+            
         })
             
             // When the data finishes loading
@@ -368,8 +375,7 @@
                 
                 // calculate the necessary height of the side panel content
                 // and apply it
-                $('#side-panel-content').height(sidePanelHeight - legendStackHeight - headersHeight - 30);
-            
+                $('#side-panel-content').height(sidePanelHeight - legendStackHeight - headersHeight - 30); 
             
             })
         
